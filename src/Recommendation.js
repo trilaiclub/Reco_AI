@@ -15,37 +15,8 @@ const styles = {
         flexWrap: 'wrap',
         justifyContent: 'space-around',
     },
-    gridList: {
-        width: 500,
-        height: 450,
-        overflowY: 'auto',
-    },
-    customWidth: {
-        width: 150,
-    },
-    imgStyle: {
-        height: 150,
-        width: 150
-    },
-    display: 'flex',
-    alignItems: 'center',
-    fontSize: 40,
-    divStyle: {
-        height: 150
-    },
-    divImage: {
-        height: 150,
-        width: 150
-    },
-    divTableTr: {
-        borderBottom: '1 solid black'
-    },
-    divTableTdContent: {
-        textAlign: 'left',
-        verticalAlign: 'top'
-    },
-    divTable: {
-        align: 'top'
+    recommendationdiv:{
+        align:'left'
     },
     card: {
         maxWidth: 345,
@@ -53,7 +24,10 @@ const styles = {
     media: {
         height: 300
     },
-
+    divsubheader:{
+    align:'center',
+    textalign:'center'
+    }
 };
 
 const dataSourceConfig = {
@@ -67,40 +41,59 @@ class Recommendation extends React.Component {
         this.state = {
             recommendeddetails: [],
             noimage: require("./No_image_available.svg"),
-            dataSource3: [],
-            showCheckboxes: false,
-            searchWidth: true
+            userDS: [],
+            searchWidth: true,
+            userVal:"",
+            userURL:"https://raw.githubusercontent.com/trilaiclub/Reco_AI/master/users.json",
+            searchURL:"http://engine:3000/api/RecoEngine/Compute"
         };
     }
-
-    loadUserSearch() {
-        const url = "https://raw.githubusercontent.com/gurupathidev/RecoEngine/master/usersearchdetails.json";
-        fetch(url)
+    
+    loadUserSearch() {        
+        fetch(this.state.userURL)
             .then(response => response.json())
             .then(data => {
-                this.setState({ dataSource3: data });
+                this.setState({ userDS: data });
             })
             .catch(
             err => console.error(this.props.url, err.toString())
             )
     }
-    loadData() {
-        const url = "https://raw.githubusercontent.com/gurupathidev/RecoEngine/master/recommended.json";
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                this.setState({ recommendeddetails: data });
-            })
-            .catch(
-            err => console.error(this.props.url, err.toString())
-            )
+    loadData(){
+        if(this.state.userVal!=="")
+        {
+            var finalSearchURL = this.state.searchURL+"?userid="+this.state.userVal+"";
+            //finalSearchURL= "https://raw.githubusercontent.com/gurupathidev/RecoEngine/master/recommended.json";
+            fetch(finalSearchURL)
+                .then(response => response.json())
+                .then(data => {
+                    if(this.state.userVal!=="")
+                    {                  
+                        this.setState({ recommendeddetails: data.response });
+                    }
+                    else{
+                    this.setState({ recommendeddetails: [] });
+                    }
+            
+                })
+                .catch(
+                err => console.error(this.state.url, err.toString())
+                )
+            
+        }
+        else {
+            console.log("Please select user");
+        }
+        
     }
     onUpdateInput(inputValue) {
-        console.log(inputValue);
+        console.log(inputValue.valueKey);     
+        this.state.userVal=inputValue.valueKey;
+        this.loadData();
     }
 
-    componentDidMount() {
-        this.loadData();
+    componentDidMount() {        
+       // this.loadData();
         this.loadUserSearch();
     }
 
@@ -113,15 +106,16 @@ class Recommendation extends React.Component {
                 <AutoComplete
                     floatingLabelText="Search User"
                     filter={AutoComplete.fuzzyFilter}
-                    dataSource={this.state.dataSource3}
+                    dataSource={this.state.userDS}
                     dataSourceConfig={dataSourceConfig}
                     maxSearchResults={5}
                     fullWidth={this.state.searchWidth}
-                    onUpdateInput={this.onUpdateInput}
+                    onNewRequest={this.onUpdateInput.bind(this)}
+                    serchText={this.state.userVal}
                 />
-                <br />
-                <div>
-                    <Subheader><b>Recommended Details</b> </Subheader>
+                <br />              
+                <div style={styles.recommendationdiv}>
+                    <Subheader style={styles.divsubheader}><b>Recommended Details</b> </Subheader>
                     {this.state.recommendeddetails.map((tile) => (
                         <Card >
                             <CardHeader

@@ -63,7 +63,7 @@ class Recommendation extends React.Component {
     loadData(){
         if(this.state.userVal!=="")
         {
-            var finalSearchURL = this.state.searchURL+"?userid="+this.state.userVal+"&action=puruchased";
+            var finalSearchURL = this.state.searchURL+"?userid="+this.state.userVal+"&gAction=purchased";
             //finalSearchURL= "https://raw.githubusercontent.com/gurupathidev/RecoEngine/master/recommended.json";
             fetch(finalSearchURL)
                 .then(response => response.json())
@@ -71,28 +71,10 @@ class Recommendation extends React.Component {
                     if(this.state.userVal!=="")
                     {                  
                         this.setState({ recommendeddetails: data.response });
+                        this.loadBrowsedData();
                     }
                     else{
                     this.setState({ recommendeddetails: [] });
-                    }
-            
-                })
-                .catch(
-                err => console.error(this.state.url, err.toString())
-                )
-
-                //Browsed               
-               finalSearchURL = this.state.searchURL+"?userid="+this.state.userVal+"&action=browsed";
-            //finalSearchURL= "https://raw.githubusercontent.com/gurupathidev/RecoEngine/master/recommended.json";
-            fetch(finalSearchURL)
-                .then(response => response.json())
-                .then(data => {
-                    if(this.state.userVal!=="")
-                    {                  
-                        this.setState({ recommendedbrowsed: data.response });
-                    }
-                    else{
-                    this.setState({ recommendedbrowsed: [] });
                     }
             
                 })
@@ -106,6 +88,29 @@ class Recommendation extends React.Component {
         }
         
     }
+
+    loadBrowsedData() {
+
+        //Browsed
+        var finalSearchURL = this.state.searchURL+"?userid="+this.state.userVal+"&gAction=browsed";
+        //finalSearchURL= "https://raw.githubusercontent.com/gurupathidev/RecoEngine/master/recommended.json";
+        fetch(finalSearchURL)
+            .then(response => response.json())
+            .then(data => {
+                if(this.state.userVal!=="")
+                {
+                    this.setState({ recommendedbrowsed: data.response });
+                }
+                else{
+                this.setState({ recommendedbrowsed: [] });
+                }
+
+            })
+            .catch(
+            err => console.error(this.state.url, err.toString())
+            )
+    }
+
     onUpdateInput(inputValue) {
         console.log(inputValue.valueKey);     
         this.state.userVal=inputValue.valueKey;

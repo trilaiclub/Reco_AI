@@ -40,6 +40,7 @@ class Recommendation extends React.Component {
         super(props);
         this.state = {
             recommendeddetails: [],
+            recommendedbrowsed: [],
             noimage: require("./No_image_available.svg"),
             userDS: [],
             searchWidth: true,
@@ -62,7 +63,7 @@ class Recommendation extends React.Component {
     loadData(){
         if(this.state.userVal!=="")
         {
-            var finalSearchURL = this.state.searchURL+"?userid="+this.state.userVal+"";
+            var finalSearchURL = this.state.searchURL+"?userid="+this.state.userVal+"&action=puruchased";
             //finalSearchURL= "https://raw.githubusercontent.com/gurupathidev/RecoEngine/master/recommended.json";
             fetch(finalSearchURL)
                 .then(response => response.json())
@@ -73,6 +74,25 @@ class Recommendation extends React.Component {
                     }
                     else{
                     this.setState({ recommendeddetails: [] });
+                    }
+            
+                })
+                .catch(
+                err => console.error(this.state.url, err.toString())
+                )
+
+                //Browsed               
+               finalSearchURL = this.state.searchURL+"?userid="+this.state.userVal+"&action=browsed";
+            //finalSearchURL= "https://raw.githubusercontent.com/gurupathidev/RecoEngine/master/recommended.json";
+            fetch(finalSearchURL)
+                .then(response => response.json())
+                .then(data => {
+                    if(this.state.userVal!=="")
+                    {                  
+                        this.setState({ recommendedbrowsed: data.response });
+                    }
+                    else{
+                    this.setState({ recommendedbrowsed: [] });
                     }
             
                 })
@@ -115,8 +135,31 @@ class Recommendation extends React.Component {
                 />
                 <br />              
                 <div style={styles.recommendationdiv}>
-                    <Subheader style={styles.divsubheader}><b>Recommended Details</b> </Subheader>
+                    <Subheader style={styles.divsubheader}><h2>Purchased Recommentations</h2> </Subheader>
                     {this.state.recommendeddetails.map((tile) => (
+                        <Card >
+                            <CardHeader
+                                title={<span><b> {tile.title}</b></span>} />
+                            <CardMedia >
+                                <ReactImageFallback src={tile.urltoimage}
+                                    fallbackImage={this.state.noimage}
+                                    alt=""
+                                    style={styles.media} />
+                            </CardMedia>
+                            <CardText >
+                                <span>{tile.description}</span>
+                            </CardText>
+                            <CardActions>
+                                <a href={tile.sourceurl} target="_blank">
+                                    <FlatButton label="More..." />
+                                </a>
+                            </CardActions>
+                        </Card>
+                    ))}
+                    <br/>
+                    <hr/>
+                    <Subheader style={styles.divsubheader}><h2>Browsed Recommentations</h2> </Subheader>
+                    {this.state.recommendedbrowsed.map((tile) => (
                         <Card >
                             <CardHeader
                                 title={<span><b> {tile.title}</b></span>} />

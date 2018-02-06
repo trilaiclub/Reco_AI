@@ -28,7 +28,7 @@ class AppNavigationBar extends  React.Component {
 
  return(
   <AppBar
-    title="Reco Engine"    
+    title="Reco Engine UI"    
     showMenuIconButton={false}
     iconElementRight={<FlatButton label={this.state.date.toLocaleTimeString()}/>}
   />

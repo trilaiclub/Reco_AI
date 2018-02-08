@@ -46,7 +46,7 @@ class Recommendation extends React.Component {
             searchWidth: true,
             userVal:"",
             userURL:"https://raw.githubusercontent.com/trilaiclub/Reco_AI/master/users.json",
-            searchURL:"http://engine:3001/api/RecoEngine/Compute"
+            searchURL:"http://ec2-34-201-43-55.compute-1.amazonaws.com:3001/api/RecoEngine/Compute"
         };
     }
     
